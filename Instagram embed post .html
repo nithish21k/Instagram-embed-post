@@ -1,0 +1,195 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Post Embed</title>
+    <style>
+    #grad1 {
+    height:600px;
+    background-image: linear-gradient(yellow,pink,white);
+    }
+    </style>
+    <style>
+        pre {
+            white-space: pre-wrap; /* Wraps the long lines */
+            word-wrap: break-word; /* Ensures long words or lines break properly */
+            background: #f4f4f4;
+            padding: 10px;
+            color:black;
+            border: 1px solid #ccc;
+            max-width: 100%; /* Ensures it doesn't go beyond the container */
+            overflow-x: auto; /* Adds horizontal scrolling if necessary */
+        }
+        .embed-container {
+            margin-top: 20px;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+    
+    
+    
+    <style>
+    body {
+    background: linear-gradient(to bottom, #E1306C, #FD1D1D);
+    color: #F7F7F7;
+    }
+    </style>
+</head>
+<body>
+    <center><h1 style="color:">Instagram Post Embed Generator</h1></center>
+
+    <!-- Input for user to enter Instagram link -->
+   <center><h4> <label for="instagram-link">Enter Instagram Post URL:</label></center></h4>
+<center>   <input type="text" id="instagram-link" placeholder="https://www.instagram.com/p/..." style="width: 100%; max-width: 600px;height:40px;"></center>
+   <br>
+   
+    <center><button style="background-color:skyblue;display: flex;
+    justify-content: space-between;background-color: #8BC34A;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+    
+    " onclick="showCode()">Generate Embed Code</button></center>
+
+    <!-- Area to display the raw embed code -->
+    <br><h2>Generated Embed Code</h2>
+    <pre id="code-display" contenteditable="false"></pre>
+
+    <!-- Buttons for copying and editing code -->
+    <style>
+    .button-group {
+    display: flex;
+    justify-content: space-between;
+    }
+    
+    .button-group button {
+    background-color: #8BC34A;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+    }
+    
+    .button-group button:hover {
+    background-color: #64B236;
+    }
+    
+    .button-group button:active {
+    background-color: #3E8E41;
+    }
+    </style>
+    
+    <div class="button-group">
+        <button onclick="copyCode()">Copy Code</button>
+        <button onclick="editCode()">Edit Code</button>
+        <button onclick="updatePreview()">Update Preview</button>
+    </div>
+
+    <!-- Area to display the rendered Instagram post -->
+    <h2>Preview</h2>
+    <div class="embed-container" id="embed-preview"></div>
+
+    <script>
+        function showCode() {
+            // Get the URL entered by the user
+            const url = document.getElementById('instagram-link').value.trim();
+            if (!url) {
+                alert('Please enter a valid Instagram URL.');
+                return;
+            }
+
+            // Extract the post ID from the URL
+            const match = url.match(/instagram\.com\/p\/([^\/]+)/);
+            if (!match) {
+                alert('Invalid Instagram URL. Please enter a valid URL.');
+                return;
+            }
+            const postId = match[1];
+
+            // Generate the embed code
+            const code = `
+<blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="13">
+    <div style="padding:16px;"> 
+        <a href="${url}" style="background:#FFF; line-height:0; padding:0; display:block; width:100%; max-width:540px; margin:0 auto; box-shadow:0 0 1px rgba(0,0,0,0.5);" target="_blank">
+            <div style="display: flex; align-items: center; justify-content: center; padding: 0; background: #FFF;">
+                <div style="max-width:5000px; min-width:330px;">
+                    <div style="position: relative; padding-bottom: 100%; height: 0; overflow: hidden;">
+                        <iframe src="https://www.instagram.com/p/${postId}/embed" frameborder="0" scrolling="no" allowtransparency="true" allow="encrypted-media" style="position: absolute; top:0; left:0; width:100%; height:100%;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</blockquote>
+            `;
+
+            // Display the raw code in the <pre> element
+            document.getElementById('code-display').textContent = code;
+
+            // Display the actual Instagram embed in the preview area
+            document.getElementById('embed-preview').innerHTML = code;
+
+            // Optionally reinitialize Instagram's embed script to process the new content
+            if (window.instgrm) {
+                instgrm.Embeds.process();
+            }
+
+            // Disable editing of the code initially
+            document.getElementById('code-display').setAttribute('contenteditable', 'false');
+        }
+
+        function copyCode() {
+            const codeElement = document.getElementById('code-display');
+            const range = document.createRange();
+            range.selectNodeContents(codeElement);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            try {
+                document.execCommand('copy');
+                alert('Code copied to clipboard!');
+            } catch (err) {
+                alert('Failed to copy code.');
+            }
+        }
+
+        function editCode() {
+            const codeElement = document.getElementById('code-display');
+            // Toggle the contenteditable attribute
+            const isEditable = codeElement.getAttribute('contenteditable') === 'true';
+            codeElement.setAttribute('contenteditable', isEditable ? 'false' : 'true');
+            alert(isEditable ? 'Editing disabled.' : 'You can now edit the code.');
+        }
+
+        function updatePreview() {
+            const code = document.getElementById('code-display').textContent;
+            document.getElementById('embed-preview').innerHTML = code;
+
+            // Reinitialize Instagram's embed script to process the new content
+            if (window.instgrm) {
+                instgrm.Embeds.process();
+            }
+        }
+    </script>
+    <script async src="//www.instagram.com/embed.js"></script>
+</body>
+</html>
